@@ -1,5 +1,5 @@
-set terminal pdf
-set output 'q4a.pdf'
+set terminal pngcairo size 800,600
+set output 'q4a.png'
 
 set title "Gender vs Number of People with Heart Disease"
 set xlabel "Gender (0 = Female, 1 = Male)"

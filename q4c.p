@@ -1,5 +1,5 @@
-set terminal pdf
-set output 'q4c.pdf'
+set terminal pngcairo size 800,600
+set output 'q4c.png'
 
 set title "Age vs Cholesterol for Individuals Without Heart Disease"
 set xlabel "Age"

@@ -1,5 +1,5 @@
-set terminal pdf
-set output 'q4b.pdf'
+set terminal pngcairo size 800,600
+set output 'q4b.png'
 
 set title "Age vs Blood Pressure"
 set xlabel "Age"
