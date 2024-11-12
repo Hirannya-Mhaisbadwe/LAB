@@ -1,52 +1,24 @@
 #!/bin/bash
+INPUT_FILE=$1
+OUTPUT_FILE="heart.tex"
 
-# Check if input CSV file is provided
-if [ -z "$1" ]; then
-  echo "Usage: $0 <input.csv>"
-  exit 1
-fi
+echo "\documentclass{article}" > $OUTPUT_FILE
+echo "\usepackage{graphicx}" >> $OUTPUT_FILE
+echo "\begin{document}" >> $OUTPUT_FILE
+echo "\begin{table}[h!]" >> $OUTPUT_FILE
+echo "\centering" >> $OUTPUT_FILE
+echo "\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}" >> $OUTPUT_FILE
+echo "\hline" >> $OUTPUT_FILE
+# Read the CSV header and format as LaTeX table header
+HEADER=$(head -n 1 $INPUT_FILE)
+echo $HEADER | awk -F',' '{for(i=1;i<=NF;i++) printf "%s & ", $i}' | sed 's/& $/\\\\ \\hline/' >> $OUTPUT_FILE
 
-input_csv="$1"
-output_tex="${input_csv%.csv}.tex"
-
-# Generate the LaTeX file
-cat <<EOT > "$output_tex"
-\\documentclass{article}
-\\usepackage{booktabs} % For professional looking tables
-\\usepackage{geometry} % For adjusting page layout
-\\geometry{margin=1in}
-\\begin{document}
-\\begin{table}[h!]
-\\centering
-\\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
-\\hline
-EOT
-
-# Read the header and add it to the LaTeX table
-header=$(head -n 1 "$input_csv")
-IFS=',' read -ra cols <<< "$header"
-for col in "${cols[@]}"; do
-  echo -n "\\textbf{$col} & " >> "$output_tex"
+tail -n +2 $INPUT_FILE | while IFS=',' read -r col1 col2 col3 col4 col5 col6 col7 col8 col9 col10 col11 col12 col13 col14
+do
+  echo "$col1 & $col2 & $col3 & $col4 & $col5 & $col6 & $col7 & $col8 & $col9 & $col10 & $col11  &$col12 & $col13 & $col14 \\\\ \\hline" >> $OUTPUT_FILE
 done
-# Remove last '&' and add '\\' for new line
-sed -i '$ s/& $/\\\\ \\hline/' "$output_tex"
-
-# Read the CSV rows and add them to the LaTeX table
-tail -n +2 "$input_csv" | while IFS=',' read -r ${cols[*]}; do
-  for val in "${!cols[@]}"; do
-    echo -n "${!val} & " >> "$output_tex"
-  done
-  # Remove last '&' and add '\\' for new line
-  sed -i '$ s/& $/\\\\ \\hline/' "$output_tex"
-done
-
-# Finish LaTeX table and document
-cat <<EOT >> "$output_tex"
-\\end{tabular}
-\\end{table}
-\\end{document}
-EOT
-
-echo "LaTeX file created: $output_tex"
-echo "Run pdflatex on $output_tex to generate a PDF."
-
+echo "\end{tabular}" >> $OUTPUT_FILE
+echo "\caption{Heart Disease Data}" >> $OUTPUT_FILE
+echo "\end{table}" >> $OUTPUT_FILE
+echo "\end{document}" >> $OUTPUT_FILE
+echo "LaTeX file $OUTPUT_FILE generated."
